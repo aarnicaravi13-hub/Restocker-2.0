@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Restocker — Never Run Out Again</title>
+
+    <meta name="theme-color" content="#234735">
+    <meta name="description"
+          content="Track your essentials, manage purchases, and remember when to restock.">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <a href="#" class="brand">
+                <span class="brand-icon">R</span>
+                <span>restocker<span class="brand-dot">.</span></span>
+            </a>
+
+            <p class="sidebar-label">WORKSPACE</p>
+
+            <nav class="navigation">
+                <a href="#dashboard" class="nav-link active">
+                    <span>▦</span> Dashboard
+                </a>
+
+                <a href="#items-section" class="nav-link">
+                    <span>▤</span> My essentials
+                </a>
+
+                <a href="#reminders" class="nav-link">
+                    <span>◷</span> Reminders
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-note">
+                    <span class="note-icon">✳</span>
+                    <p>A little planning goes a long way.</p>
+                </div>
+
+                <p class="sidebar-caption">YOUR ESSENTIALS, IN CHECK.</p>
+            </div>
+
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content" id="dashboard">
+
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">YOUR PERSONAL ESSENTIALS MANAGER</p>
+                    <h1>Good things start <span>with being prepared.</span></h1>
+                    <p class="page-description">
+                        Keep track of what you use and when it's time to restock.
+                    </p>
+                </div>
+
+                <button class="button button-primary" id="open-add-modal">
+                    <span>＋</span> Add an item
+                </button>
+            </header>
+
+            <!-- Summary cards -->
+            <section class="stats-grid" aria-label="Inventory summary">
+
+                <article class="stat-card">
+                    <div class="stat-heading">
+                        <span>Total essentials</span>
+                        <span class="stat-icon">▤</span>
+                    </div>
+                    <p class="stat-number" id="total-count">0</p>
+                    <p class="stat-caption">Items you're keeping track of</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-heading">
+                        <span>Due soon</span>
+                        <span class="stat-icon">◷</span>
+                    </div>
+                    <p class="stat-number" id="due-count">0</p>
+                    <p class="stat-caption">Reminders within the next 3 days</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-heading">
+                        <span>Overdue</span>
+                        <span class="stat-icon">!</span>
+                    </div>
+                    <p class="stat-number" id="overdue-count">0</p>
+                    <p class="stat-caption">Items past their reminder date</p>
+                </article>
+
+            </section>
+
+            <!-- Reminder banner -->
+            <section class="reminder-banner" id="reminders">
+                <div class="reminder-symbol">✳</div>
+
+                <div class="reminder-copy">
+                    <h2>Your next restock, made easier.</h2>
+                    <p id="reminder-summary">
+                        Add your essentials to start tracking reminders.
+                    </p>
+                </div>
+
+                <button class="button button-outline" id="enable-notifications">
+                    Enable notifications
+                </button>
+            </section>
+
+            <!-- Inventory -->
+            <section class="items-section" id="items-section">
+
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">YOUR COLLECTION</p>
+                        <h2>My essentials</h2>
+                        <p class="section-description">
+                            Everything you need, all in one place.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+
+                    <label class="search-box">
+                        <span>⌕</span>
+                        <input
+                            type="search"
+                            id="search-input"
+                            placeholder="Search your essentials..."
+                            aria-label="Search essentials">
+                    </label>
+
+                    <label class="filter-box">
+                        <span class="sr-only">Filter items</span>
+                        <select id="filter-select">
+                            <option value="all">All items</option>
+                            <option value="upcoming">Due soon</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="later">Not due yet</option>
+                        </select>
+                    </label>
+
+                </div>
+
+                <div class="items-list" id="items-list"></div>
+
+            </section>
+
+            <footer class="footer">
+                <span>restocker<span class="brand-dot">.</span></span>
+                <span>Less worrying. More living.</span>
+            </footer>
+
+        </main>
+
+    </div>
+
+    <!-- Add/Edit modal -->
+    <dialog class="item-dialog" id="item-dialog">
+
+        <form id="item-form">
+
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">YOUR ESSENTIALS</p>
+                    <h2 id="modal-title">Add an item</h2>
+                    <p class="modal-description">
+                        A few details now make restocking easier later.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="close-button"
+                    id="close-modal"
+                    aria-label="Close form">×</button>
+            </div>
+
+            <input type="hidden" id="item-id">
+
+            <div class="form-group">
+                <label for="item-name">Item name *</label>
+                <input
+                    id="item-name"
+                    type="text"
+                    maxlength="100"
+                    placeholder="e.g. Shampoo"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="item-category">Category</label>
+                <select id="item-category">
+                    <option value="Personal care">Personal care</option>
+                    <option value="Skincare">Skincare</option>
+                    <option value="Groceries">Groceries</option>
+                    <option value="Stationery">Stationery</option>
+                    <option value="Household">Household</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label for="last-purchased">Last purchased *</label>
+                    <input
+                        id="last-purchased"
+                        type="date"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Usually lasts (days) *</label>
+                    <input
+                        id="duration"
+                        type="number"
+                        min="1"
+                        max="36500"
+                        placeholder="e.g. 30"
+                        required>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label for="reminder-date">Remind me on *</label>
+                <input
+                    id="reminder-date"
+                    type="date"
+                    required>
+                <p class="field-hint">
+                    Choose when you want to be reminded to restock.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="item-notes">Notes <span>(optional)</span></label>
+                <textarea
+                    id="item-notes"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Brand, quantity, preferred product..."></textarea>
+            </div>
+
+            <p class="form-error" id="form-error" role="alert"></p>
+
+            <div class="modal-actions">
+                <button
+                    type="button"
+                    class="button button-outline"
+                    id="cancel-modal">Cancel</button>
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                    id="submit-button">Save item</button>
+            </div>
+
+        </form>
+
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
